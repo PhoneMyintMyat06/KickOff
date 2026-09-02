@@ -1,13 +1,22 @@
 <?php
 require_once 'db.php';
 
-// 1. Fetch Top News
+// 1. Fetch Top News (Title, Image, Date strictly for summary view)
 $topNewsQuery = "SELECT * FROM NewsArticle WHERE isTopNews = 1 ORDER BY publishDate DESC LIMIT 1";
 $topNewsResult = $conn->query($topNewsQuery);
 $topNews = $topNewsResult ? $topNewsResult->fetch_assoc() : null;
 
-// 2. Fetch Match of the Week
-$matchQuery = "SELECT * FROM Fixture WHERE isMatchOfWeek = 1 ORDER BY matchDate ASC LIMIT 1";
+// 2. Fetch Match of the Week (JOINed with Team table to get Team Names and Icons)
+$matchQuery = "SELECT f.*, 
+                      t1.teamName AS homeTeamName, 
+                      t1.teamIcon AS homeTeamIcon, 
+                      t2.teamName AS awayTeamName, 
+                      t2.teamIcon AS awayTeamIcon 
+               FROM Fixture f 
+               JOIN Team t1 ON f.homeTeamID = t1.teamID 
+               JOIN Team t2 ON f.awayTeamID = t2.teamID 
+               WHERE f.isMatchOfWeek = 1 
+               ORDER BY f.matchDate ASC LIMIT 1";
 $matchResult = $conn->query($matchQuery);
 $matchOfWeek = $matchResult ? $matchResult->fetch_assoc() : null;
 ?>
@@ -57,7 +66,6 @@ $matchOfWeek = $matchResult ? $matchResult->fetch_assoc() : null;
                         <span class="badge">TOP STORY</span>
                         <h3><?php echo htmlspecialchars($topNews['title']); ?></h3>
                         <p class="news-meta">Published: <?php echo date('M d, Y', strtotime($topNews['publishDate'])); ?></p>
-                        <p><?php echo htmlspecialchars(substr($topNews['content'], 0, 200)) . '...'; ?></p>
                         <a href="news_detail.php?id=<?php echo $topNews['newsID']; ?>" class="btn-link">Read Full Story &rarr;</a>
                     </div>
                 </article>
@@ -72,37 +80,44 @@ $matchOfWeek = $matchResult ? $matchResult->fetch_assoc() : null;
         <section class="section">
             <h2 class="section-title">Match of the <span>Week</span></h2>
             
-            <div class="card match-featured-card">
-                <?php if ($matchOfWeek): ?>
-                    <div class="featured-badge">FEATURED MATCH</div>
-                    <div class="match-details">
-                        <div class="team-box home">
-                            <?php if(!empty($matchOfWeek['homeTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($matchOfWeek['homeTeamIcon']); ?>" alt="Home Team" class="team-icon">
-                            <?php endif; ?>
-                            <h2><?php echo htmlspecialchars($matchOfWeek['homeTeam']); ?></h2>
-                        </div>
-                        
-                        <div class="vs-box">
-                            <span class="vs">VS</span>
-                            <div class="match-time-info">
-                                <p class="time"><?php echo date('H:i', strtotime($matchOfWeek['matchTime'])); ?></p>
-                                <p class="date"><?php echo date('D, M d', strtotime($matchOfWeek['matchDate'])); ?></p>
-                                <p class="venue">📍 <?php echo htmlspecialchars($matchOfWeek['venue']); ?></p>
-                            </div>
-                        </div>
-                        
-                        <div class="team-box away">
-                            <?php if(!empty($matchOfWeek['awayTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($matchOfWeek['awayTeamIcon']); ?>" alt="Away Team" class="team-icon">
-                            <?php endif; ?>
-                            <h2><?php echo htmlspecialchars($matchOfWeek['awayTeam']); ?></h2>
-                        </div>
+            <?php if ($matchOfWeek): ?>
+                <div class="card fixture-card motw-card">
+                    <!-- Home Team -->
+                    <div class="fixture-team home-team">
+                        <span class="team-name motw-team-name"><?php echo htmlspecialchars($matchOfWeek['homeTeamName']); ?></span>
+                        <?php if (!empty($matchOfWeek['homeTeamIcon'])): ?>
+                            <img src="<?php echo htmlspecialchars($matchOfWeek['homeTeamIcon']); ?>" alt="Home Team" class="fixture-icon motw-logo">
+                        <?php else: ?>
+                            <div class="icon-placeholder"></div>
+                        <?php endif; ?>
                     </div>
-                <?php else: ?>
+                    
+                    <!-- Center VS & Info -->
+                    <div class="fixture-center">
+                        <div class="score-box motw-vs-box">
+                            <span class="score">VS</span>
+                        </div>
+                        <span class="match-status-badge motw-time-text">
+                            <?php echo date('H:i', strtotime($matchOfWeek['matchTime'])); ?> | <?php echo date('D, M d', strtotime($matchOfWeek['matchDate'])); ?>
+                        </span>
+                        <span class="match-status-badge">📍 <?php echo htmlspecialchars($matchOfWeek['venue']); ?></span>
+                    </div>
+                    
+                    <!-- Away Team -->
+                    <div class="fixture-team away-team">
+                        <?php if (!empty($matchOfWeek['awayTeamIcon'])): ?>
+                            <img src="<?php echo htmlspecialchars($matchOfWeek['awayTeamIcon']); ?>" alt="Away Team" class="fixture-icon motw-logo">
+                        <?php else: ?>
+                            <div class="icon-placeholder"></div>
+                        <?php endif; ?>
+                        <span class="team-name motw-team-name"><?php echo htmlspecialchars($matchOfWeek['awayTeamName']); ?></span>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="card">
                     <p class="no-data">No Match of the Week scheduled.</p>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php endif; ?>
         </section>
 
     </main>
@@ -110,13 +125,13 @@ $matchOfWeek = $matchResult ? $matchResult->fetch_assoc() : null;
     <!-- Footer Section -->
     <footer class="footer">
         <div class="footer-container">
-            <!-- 1. Paragraph / Site Info -->
+            <!-- 1. Site Info -->
             <div class="footer-info">
                 <h3>KICK<span>OFF</span></h3>
                 <p>Your ultimate destination for Premier League news, fixtures, and real-time standings.</p>
             </div>
             
-            <!-- 2. Pure Social Media Icons (Facebook, Instagram, YouTube) -->
+            <!-- 2. Social Media Icons -->
             <div class="footer-social">
                 <div class="social-icons-only">
                     <a href="#" class="social-icon-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -125,7 +140,7 @@ $matchOfWeek = $matchResult ? $matchResult->fetch_assoc() : null;
                 </div>
             </div>
 
-            <!-- 3. Smaller Staff Access Button -->
+            <!-- 3. Staff Access Button -->
             <div class="footer-admin">
                 <a href="admin_login.php" class="admin-login-btn">Staff Access Portal &rarr;</a>
             </div>

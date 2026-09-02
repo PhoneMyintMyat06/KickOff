@@ -1,9 +1,29 @@
 <?php
 require_once 'db.php';
 
-// Fetch Completed Matches ( matchDate အဟောင်းများကိုပဲ ဆွဲထုတ်မည် )
-$resultQuery = "SELECT * FROM Fixture WHERE matchDate < CURDATE() ORDER BY matchDate DESC, matchTime DESC";
-$resultData = $conn->query($resultQuery);
+// 1. Fetch available Matchdays for Filter Dropdown
+$matchdayQuery = "SELECT DISTINCT matchday FROM Fixture ORDER BY matchday ASC";
+$matchdaysResult = $conn->query($matchdayQuery);
+
+// 2. Get Selected Matchday (Default to Matchday 1 or smallest available matchday)
+$selectedMatchday = isset($_GET['matchday']) ? intval($_GET['matchday']) : 1;
+
+// 3. Fetch Completed Matches by JOINing Fixture, Team, and matchresult tables
+$sql = "SELECT f.*, 
+               r.homeScore, r.awayScore,
+               t1.teamName AS homeTeamName, t1.teamIcon AS homeTeamIcon, 
+               t2.teamName AS awayTeamName, t2.teamIcon AS awayTeamIcon 
+        FROM matchresult r
+        JOIN Fixture f ON r.fixtureID = f.fixtureID
+        JOIN Team t1 ON f.homeTeamID = t1.teamID 
+        JOIN Team t2 ON f.awayTeamID = t2.teamID 
+        WHERE f.matchday = ?
+        ORDER BY f.matchDate DESC, f.matchTime DESC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $selectedMatchday);
+$stmt->execute();
+$resultData = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +59,25 @@ $resultData = $conn->query($resultQuery);
     <main class="container">
 
         <section class="section">
-            <h2 class="section-title">Match <span>Results</span></h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">Match <span>Results</span></h2>
+                
+                <!-- Matchday Filter Dropdown -->
+                <form action="results.php" method="GET" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="matchday" style="color: var(--text-muted); font-weight: 600;">Select Round:</label>
+                    <select name="matchday" id="matchday" onchange="this.form.submit()" class="admin-form-select" style="width: auto; padding: 0.5rem 1rem;">
+                        <?php if ($matchdaysResult && $matchdaysResult->num_rows > 0): ?>
+                            <?php while($m = $matchdaysResult->fetch_assoc()): ?>
+                                <option value="<?php echo $m['matchday']; ?>" <?php echo ($m['matchday'] == $selectedMatchday) ? 'selected' : ''; ?>>
+                                    Matchday <?php echo $m['matchday']; ?>
+                                </option>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <option value="1">Matchday 1</option>
+                        <?php endif; ?>
+                    </select>
+                </form>
+            </div>
             
             <div class="fixtures-wrapper">
                 <?php if ($resultData && $resultData->num_rows > 0): ?>
@@ -58,9 +96,9 @@ $resultData = $conn->query($resultQuery);
 
                     <div class="card fixture-card result-card">
                         <div class="fixture-team home-team">
-                            <span class="team-name"><?php echo htmlspecialchars($row['homeTeam']); ?></span>
+                            <span class="team-name"><?php echo htmlspecialchars($row['homeTeamName']); ?></span>
                             <?php if (!empty($row['homeTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($row['homeTeamIcon']); ?>" alt="Home Logo" class="fixture-icon">
+                                <img src="<?php echo htmlspecialchars($row['homeTeamIcon']); ?>" alt="Home Logo" class="fixture-icon motw-logo">
                             <?php else: ?>
                                 <div class="icon-placeholder"></div>
                             <?php endif; ?>
@@ -68,27 +106,27 @@ $resultData = $conn->query($resultQuery);
 
                         <div class="fixture-center">
                             <div class="score-box">
-                                <span class="score"><?php echo isset($row['homeScore']) ? $row['homeScore'] : '0'; ?></span>
+                                <span class="score"><?php echo htmlspecialchars($row['homeScore']); ?></span>
                                 <span class="score-divider">-</span>
-                                <span class="score"><?php echo isset($row['awayScore']) ? $row['awayScore'] : '0'; ?></span>
+                                <span class="score"><?php echo htmlspecialchars($row['awayScore']); ?></span>
                             </div>
                             <span class="match-status-badge">FT</span>
                         </div>
 
                         <div class="fixture-team away-team">
                             <?php if (!empty($row['awayTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($row['awayTeamIcon']); ?>" alt="Away Logo" class="fixture-icon">
+                                <img src="<?php echo htmlspecialchars($row['awayTeamIcon']); ?>" alt="Away Logo" class="fixture-icon motw-logo">
                             <?php else: ?>
                                 <div class="icon-placeholder"></div>
                             <?php endif; ?>
-                            <span class="team-name"><?php echo htmlspecialchars($row['awayTeam']); ?></span>
+                            <span class="team-name"><?php echo htmlspecialchars($row['awayTeamName']); ?></span>
                         </div>
                     </div>
 
                     <?php endwhile; ?>
                 <?php else: ?>
                     <div class="card">
-                        <p class="no-data">No match results available.</p>
+                        <p class="no-data">No match results available for Matchday <?php echo $selectedMatchday; ?>.</p>
                     </div>
                 <?php endif; ?>
             </div>

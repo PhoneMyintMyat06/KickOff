@@ -1,8 +1,11 @@
 <?php
 require_once 'db.php';
 
-// Fetch Standings Data using your 'leaguetable' schema
-$tableQuery = "SELECT * FROM leaguetable ORDER BY points DESC, gd DESC, won DESC";
+// Fetch Standings Data by joining leaguetable with Team table to get teamName and teamIcon
+$tableQuery = "SELECT lt.*, t.teamName, t.teamIcon 
+               FROM leaguetable lt 
+               JOIN Team t ON lt.teamID = t.teamID 
+               ORDER BY lt.points DESC, lt.gd DESC, lt.won DESC";
 $tableResult = $conn->query($tableQuery);
 ?>
 
@@ -68,7 +71,7 @@ $tableResult = $conn->query($tableQuery);
                                         <td class="pos-cell"><?php echo $position++; ?></td>
                                         <td class="team-info-cell text-left">
                                             <?php if (!empty($row['teamIcon'])): ?>
-                                                <img src="uploads/teams/<?php echo htmlspecialchars($row['teamIcon']); ?>" alt="Team Logo" class="table-team-icon">
+                                                <img src="<?php echo htmlspecialchars($row['teamIcon']); ?>" alt="Team Logo" class="table-team-icon">
                                             <?php endif; ?>
                                             <span class="team-title"><?php echo htmlspecialchars($row['teamName']); ?></span>
                                         </td>

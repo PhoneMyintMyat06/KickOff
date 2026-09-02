@@ -1,9 +1,27 @@
 <?php
 require_once 'db.php';
 
-// Fetch Upcoming Fixtures (ပွဲစဉ်များကို နေ့ရက်အလိုက် စီစဉ်ခြင်း)
-$fixtureQuery = "SELECT * FROM Fixture WHERE matchDate >= CURDATE() ORDER BY matchDate ASC, matchTime ASC";
-$fixtureResult = $conn->query($fixtureQuery);
+// 1. Fetch available Matchdays for Filter Dropdown
+$matchdayQuery = "SELECT DISTINCT matchday FROM Fixture ORDER BY matchday ASC";
+$matchdaysResult = $conn->query($matchdayQuery);
+
+// 2. Get Selected Matchday (Default to 1 or smallest available matchday)
+$selectedMatchday = isset($_GET['matchday']) ? intval($_GET['matchday']) : 1;
+
+// 3. Fetch Fixtures for the selected matchday
+$sql = "SELECT f.*, 
+               t1.teamName AS homeTeamName, t1.teamIcon AS homeTeamIcon, 
+               t2.teamName AS awayTeamName, t2.teamIcon AS awayTeamIcon 
+        FROM Fixture f 
+        JOIN Team t1 ON f.homeTeamID = t1.teamID 
+        JOIN Team t2 ON f.awayTeamID = t2.teamID 
+        WHERE f.matchday = ? 
+        ORDER BY f.matchDate ASC, f.matchTime ASC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $selectedMatchday);
+$stmt->execute();
+$fixturesResult = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -11,15 +29,12 @@ $fixtureResult = $conn->query($fixtureQuery);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KickOff - Upcoming Fixtures</title>
-    <!-- Font Awesome Icons -->
+    <title>Fixtures - KickOff</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- External CSS Link -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Header Navigation Bar -->
     <header class="navbar">
         <div class="logo">
             <h2>KICK<span>OFF</span></h2>
@@ -35,80 +50,79 @@ $fixtureResult = $conn->query($fixtureQuery);
         </nav>
     </header>
 
-    <!-- Main Container -->
     <main class="container">
-
         <section class="section">
-            <h2 class="section-title">Upcoming <span>Fixtures</span></h2>
-            
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">Match <span>Fixtures</span></h2>
+                
+                <!-- Matchday Filter Dropdown -->
+                <form action="fixtures.php" method="GET" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="matchday" style="color: var(--text-muted); font-weight: 600;">Select Round:</label>
+                    <select name="matchday" id="matchday" onchange="this.form.submit()" class="admin-form-select" style="width: auto; padding: 0.5rem 1rem;">
+                        <?php if ($matchdaysResult && $matchdaysResult->num_rows > 0): ?>
+                            <?php while($m = $matchdaysResult->fetch_assoc()): ?>
+                                <option value="<?php echo $m['matchday']; ?>" <?php echo ($m['matchday'] == $selectedMatchday) ? 'selected' : ''; ?>>
+                                    Matchday <?php echo $m['matchday']; ?>
+                                </option>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <option value="1">Matchday 1</option>
+                        <?php endif; ?>
+                    </select>
+                </form>
+            </div>
+
             <div class="fixtures-wrapper">
-                <?php if ($fixtureResult && $fixtureResult->num_rows > 0): ?>
-                    <?php 
-                    $currentDate = '';
-                    while($row = $fixtureResult->fetch_assoc()): 
-                        $matchDateFormatted = date('D, M d, Y', strtotime($row['matchDate']));
-                        
-                        // နေ့ရက်အသစ်ရောက်တိုင်း Header အသစ်ခွဲထုတ်ပေးခြင်း
-                        if ($currentDate !== $matchDateFormatted): 
-                            $currentDate = $matchDateFormatted;
-                    ?>
-                        <div class="date-divider">
-                            <i class="fa-regular fa-calendar-check"></i> <?php echo $currentDate; ?>
-                        </div>
-                    <?php endif; ?>
+                <?php if ($fixturesResult && $fixturesResult->num_rows > 0): ?>
+                    <?php while($row = $fixturesResult->fetch_assoc()): ?>
+                        <div class="card fixture-card">
+                            <div class="fixture-team home-team">
+                                <span class="team-name"><?php echo htmlspecialchars($row['homeTeamName']); ?></span>
+                                <?php if (!empty($row['homeTeamIcon'])): ?>
+                                    <img src="<?php echo htmlspecialchars($row['homeTeamIcon']); ?>" alt="Logo" class="fixture-icon motw-logo">
+                                <?php endif; ?>
+                            </div>
 
-                    <div class="card fixture-card">
-                        <div class="fixture-team home-team">
-                            <span class="team-name"><?php echo htmlspecialchars($row['homeTeam']); ?></span>
-                            <?php if (!empty($row['homeTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($row['homeTeamIcon']); ?>" alt="Home Logo" class="fixture-icon">
-                            <?php else: ?>
-                                <div class="icon-placeholder"></div>
-                            <?php endif; ?>
-                        </div>
+                            <div class="fixture-center">
+                                <div class="score-box">
+                                    <span class="score" style="font-size: 1rem;">VS</span>
+                                </div>
+                                <span class="match-status-badge">
+                                    <?php echo date('H:i', strtotime($row['matchTime'])); ?> | <?php echo date('D, M d', strtotime($row['matchDate'])); ?>
+                                </span>
+                                <span class="match-status-badge">📍 <?php echo htmlspecialchars($row['venue']); ?></span>
+                            </div>
 
-                        <div class="fixture-center">
-                            <span class="fixture-time"><?php echo date('H:i', strtotime($row['matchTime'])); ?></span>
-                            <span class="fixture-venue"><i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars($row['venue']); ?></span>
+                            <div class="fixture-team away-team">
+                                <?php if (!empty($row['awayTeamIcon'])): ?>
+                                    <img src="<?php echo htmlspecialchars($row['awayTeamIcon']); ?>" alt="Logo" class="fixture-icon motw-logo">
+                                <?php endif; ?>
+                                <span class="team-name"><?php echo htmlspecialchars($row['awayTeamName']); ?></span>
+                            </div>
                         </div>
-
-                        <div class="fixture-team away-team">
-                            <?php if (!empty($row['awayTeamIcon'])): ?>
-                                <img src="uploads/teams/<?php echo htmlspecialchars($row['awayTeamIcon']); ?>" alt="Away Logo" class="fixture-icon">
-                            <?php else: ?>
-                                <div class="icon-placeholder"></div>
-                            <?php endif; ?>
-                            <span class="team-name"><?php echo htmlspecialchars($row['awayTeam']); ?></span>
-                        </div>
-                    </div>
-
                     <?php endwhile; ?>
                 <?php else: ?>
                     <div class="card">
-                        <p class="no-data">No upcoming fixtures scheduled at the moment.</p>
+                        <p class="no-data">No fixtures scheduled for Matchday <?php echo $selectedMatchday; ?>.</p>
                     </div>
                 <?php endif; ?>
             </div>
         </section>
-
     </main>
 
-    <!-- Footer Section -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-info">
                 <h3>KICK<span>OFF</span></h3>
                 <p>Your ultimate destination for Premier League news, fixtures, and real-time standings.</p>
             </div>
-            
             <div class="footer-social">
                 <div class="social-icons-only">
-                    <a href="#" class="social-icon-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-icon-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
-
             <div class="footer-admin">
                 <a href="admin_login.php" class="admin-login-btn">Staff Access Portal &rarr;</a>
             </div>

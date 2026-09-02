@@ -76,29 +76,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Featured News Card */
-.featured-news-card {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-}
-
-.news-banner {
-    width: 250px;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.badge {
-    background-color: var(--accent-lime);
-    color: #000;
-    padding: 2px 8px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    border-radius: 4px;
-}
-
 .btn-link {
     display: inline-block;
     margin-top: 0.8rem;
@@ -107,45 +84,36 @@ body {
     font-weight: bold;
 }
 
-/* Match of the Week */
-.match-featured-card {
-    text-align: center;
-    position: relative;
-    padding: 2rem 1.5rem;
-    background: linear-gradient(135deg, #1B263B 0%, #0D1B2A 100%);
-    border: 2px solid var(--accent-lime);
-}
-
-.featured-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--accent-lime);
-    color: #000;
-    font-size: 0.75rem;
-    font-weight: 800;
-    padding: 4px 16px;
-    border-radius: 12px;
-}
-
-.match-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.team-box { width: 35%; }
-.team-icon { width: 60px; height: 60px; object-fit: contain; margin-bottom: 0.5rem; }
-.vs-box { width: 30%; }
-.vs { font-size: 2rem; font-weight: 900; color: var(--accent-lime); }
-
-.match-time-info .time { font-size: 1.2rem; font-weight: bold; color: #fff; }
-.match-time-info .date { font-size: 0.9rem; color: var(--text-muted); }
-.match-time-info .venue { font-size: 0.85rem; color: var(--accent-lime); margin-top: 0.3rem; }
-
 .no-data { color: var(--text-muted); text-align: center; font-style: italic; }
+
+/* Custom Styling for Match of the Week Logos */
+.motw-card {
+    padding: 1.5rem 2rem;
+}
+
+.motw-logo {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-lime);
+    background-color: #ffffff;
+    padding: 2px;
+    box-shadow: 0 0 6px rgba(204, 255, 0, 0.4);
+}
+
+.motw-team-name {
+    font-size: 1.1rem;
+}
+
+.motw-vs-box {
+    padding: 4px 18px;
+}
+
+.motw-time-text {
+    margin-top: 0.5rem;
+    color: var(--accent-lime);
+}
 
 /* Footer */
 .footer {
@@ -172,7 +140,6 @@ body {
     line-height: 1.5;
 }
 
-/* Center Social Media Section */
 .footer-social {
     display: flex;
     justify-content: center;
@@ -180,7 +147,6 @@ body {
     width: 100%;
 }
 
-/* Pure Icons Layout (Centered) */
 .social-icons-only {
     display: flex;
     gap: 1.2rem;
@@ -210,7 +176,6 @@ body {
     transform: translateY(-3px);
 }
 
-/* Admin Access Button (Right Aligned) */
 .footer-admin {
     display: flex;
     justify-content: flex-end;
@@ -243,11 +208,6 @@ body {
 }
 
 @media (max-width: 768px) {
-    .featured-news-card { flex-direction: column; }
-    .news-banner { width: 100%; height: 200px; }
-    .match-details { flex-direction: column; gap: 1.5rem; }
-    .team-box, .vs-box { width: 100%; }
-    
     .footer-container { 
         grid-template-columns: 1fr; 
         gap: 2rem; 
@@ -257,7 +217,7 @@ body {
     .social-icons-only { justify-content: center; }
 }
 
-/* News Grid Section */
+/* News Grid Section (news.php) */
 .news-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -337,7 +297,7 @@ body {
     grid-column: 1 / -1;
 }
 
-/* Fixtures Section */
+/* Fixtures & Results Section (results.php) */
 .fixtures-wrapper {
     display: flex;
     flex-direction: column;
@@ -416,46 +376,6 @@ body {
     width: 24%;
 }
 
-.fixture-time {
-    background-color: var(--bg-primary);
-    color: var(--accent-lime);
-    padding: 4px 14px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    border: 1px solid var(--border-color);
-}
-
-.fixture-venue {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-top: 0.4rem;
-    text-align: center;
-}
-
-@media (max-width: 768px) {
-    .fixture-card {
-        flex-direction: column;
-        gap: 0.8rem;
-        padding: 1.2rem;
-    }
-
-    .fixture-team {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .home-team {
-        flex-direction: row-reverse;
-    }
-
-    .fixture-center {
-        width: 100%;
-    }
-}
-
-/* Results Page Styling */
 .score-box {
     display: flex;
     align-items: center;
@@ -485,7 +405,29 @@ body {
     letter-spacing: 1px;
 }
 
-/* Standings Table Styling */
+@media (max-width: 768px) {
+    .fixture-card {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 1.2rem;
+    }
+
+    .fixture-team {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .home-team {
+        flex-direction: row-reverse;
+    }
+
+    .fixture-center {
+        width: 100%;
+    }
+}
+
+/* Standings Table Styling (table.php) */
 .table-card {
     padding: 0.5rem;
     overflow: hidden;
@@ -551,7 +493,6 @@ body {
     color: var(--text-muted);
 }
 
-/* Top 4 Champions League Position Highlight */
 .top-four .pos-cell {
     color: var(--accent-lime);
     border-left: 3px solid var(--accent-lime);
@@ -567,7 +508,7 @@ body {
     font-size: 1rem;
 }
 
-/* Admin Login Page */
+/* Admin Login Page (Preserved) */
 .admin-login-body {
     display: flex;
     justify-content: center;
@@ -665,14 +606,6 @@ body {
     color: var(--accent-lime);
 }
 
-/* Stat Cards */
-.stat-card {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-}
-
 .stat-icon {
     font-size: 2.2rem;
     color: var(--accent-lime);
@@ -686,4 +619,893 @@ body {
 .stat-details p {
     font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+/* --- Admin Manage Teams Unique Outline CSS Classes --- */
+.admin-badge-text {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+}
+
+.logout-link {
+    color: #ff4d4d !important;
+}
+
+.admin-msg-success {
+    color: var(--accent-lime);
+    background: rgba(204, 255, 0, 0.1);
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--accent-lime);
+}
+
+.admin-msg-error {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.1);
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 1px solid #ff4d4d;
+}
+
+.admin-form-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.admin-form-heading {
+    color: var(--accent-lime);
+    margin-bottom: 1rem;
+}
+
+.admin-team-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.admin-input-group {
+    flex: 2;
+    min-width: 200px;
+    margin: 0;
+}
+
+.admin-input-group-file {
+    flex: 2;
+    min-width: 220px;
+    margin: 0;
+}
+
+.admin-form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.admin-form-input {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.admin-form-input-file {
+    width: 100%;
+    padding: 0.45rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.admin-submit-btn {
+    background: var(--accent-lime);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-table-heading {
+    color: var(--accent-lime);
+    padding: 1rem;
+}
+
+.admin-teams-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table-header-row {
+    border-bottom: 1px solid #333;
+    text-align: left;
+}
+
+.admin-th-id {
+    padding: 12px;
+    width: 70px;
+}
+
+.admin-th-logo {
+    padding: 12px;
+    width: 90px;
+}
+
+.admin-th-name {
+    padding: 12px;
+}
+
+.admin-th-action {
+    padding: 12px;
+    width: 100px;
+    text-align: center;
+}
+
+.admin-table-body-row {
+    border-bottom: 1px solid #222;
+}
+
+.admin-td-id {
+    padding: 10px;
+    color: var(--text-muted);
+}
+
+.admin-td-logo {
+    padding: 10px;
+}
+
+.admin-team-logo-badge {
+    width: 38px;
+    height: 38px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    box-shadow: 0 0 8px rgba(204, 255, 0, 0.3);
+    overflow: hidden;
+}
+
+.admin-team-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.admin-fallback-icon {
+    font-size: 1.8rem;
+    color: var(--accent-lime);
+}
+
+.admin-td-name {
+    padding: 10px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.admin-td-action {
+    padding: 10px;
+    text-align: center;
+}
+
+.admin-delete-link {
+    color: #ff4d4d;
+    text-decoration: none;
+}
+
+.admin-no-teams {
+    padding: 15px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* --- Admin Manage Table Unique CSS Classes --- */
+.admin-table-top-grid {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.admin-table-add-card {
+    flex: 1;
+    min-width: 300px;
+    padding: 1.5rem;
+}
+
+.admin-table-add-form {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.admin-table-select-group {
+    flex: 1;
+    margin: 0;
+}
+
+.admin-form-select {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.admin-table-add-btn {
+    width: auto;
+    padding: 0.6rem 1.5rem;
+}
+
+.admin-sync-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 280px;
+}
+
+.admin-sync-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.admin-sync-btn {
+    background: #00d26a;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-manage-standings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-standings-header-row {
+    border-bottom: 1px solid #333;
+    text-align: center;
+}
+
+.admin-pos-th {
+    padding: 12px;
+    width: 50px;
+}
+
+.admin-club-th {
+    padding: 12px;
+    text-align: left;
+}
+
+.admin-stat-th {
+    padding: 12px;
+    width: 65px;
+}
+
+.admin-action-th {
+    padding: 12px;
+    width: 90px;
+}
+
+.admin-standings-body-row {
+    border-bottom: 1px solid #222;
+    text-align: center;
+}
+
+.admin-pos-td {
+    padding: 10px;
+}
+
+.admin-club-td {
+    font-weight: 600;
+    color: var(--accent-lime);
+    padding: 10px;
+    text-align: left;
+}
+
+.admin-club-info-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-club-icon-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.admin-input-td {
+    padding: 10px;
+}
+
+.admin-stat-input {
+    width: 45px;
+    text-align: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+    padding: 0.3rem;
+}
+
+.admin-gd-td {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 10px;
+}
+
+.admin-pts-td {
+    font-weight: bold;
+    color: var(--accent-lime);
+    padding: 10px;
+    font-size: 1.05rem;
+}
+
+.admin-action-td {
+    padding: 10px;
+}
+
+.admin-save-btn {
+    background: var(--accent-lime);
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-save-icon {
+    color: #000;
+}
+
+.admin-club-icon-img {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important; /* ပုံအပြည့်ပေါ်စေရန် contain သုံးထားသည် */
+    border-radius: 50% !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    background-color: #fff;
+    padding: 3px; /* အဝိုင်းဘောင်အတွင်း လိုဂိုမကပ်သွားစေရန် */
+    border: 1px solid #ddd;
+}
+
+/* --- Admin Manage News Unique CSS Classes --- */
+.admin-news-add-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.admin-news-form-group {
+    margin-bottom: 1rem;
+}
+
+.admin-news-input {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.admin-news-textarea {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.admin-news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.admin-news-file-input {
+    background: var(--bg-primary);
+    padding: 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 100%;
+}
+
+.admin-news-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+}
+
+.admin-news-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent-lime);
+}
+
+.admin-news-checkbox-label {
+    margin: 0;
+    cursor: pointer;
+    color: var(--accent-lime);
+    font-weight: 600;
+}
+
+.admin-manage-news-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-news-header-row {
+    border-bottom: 1px solid #333;
+    text-align: left;
+}
+
+.admin-news-id-th, .admin-news-img-th, .admin-news-date-th {
+    padding: 10px;
+}
+
+.admin-news-title-th {
+    padding: 10px;
+}
+
+.admin-news-top-th, .admin-news-action-th {
+    padding: 10px;
+    text-align: center;
+}
+
+.admin-news-body-row {
+    border-bottom: 1px solid #222;
+}
+
+.admin-news-id-td, .admin-news-img-td, .admin-news-date-td {
+    padding: 10px;
+}
+
+.admin-news-thumb {
+    width: 50px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.admin-news-no-img-icon {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.admin-news-title-td {
+    font-weight: 600;
+    padding: 10px;
+    max-width: 300px;
+    text-align: left;
+}
+
+.admin-news-date-td {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.admin-news-top-td, .admin-news-action-td {
+    text-align: center;
+    padding: 10px;
+}
+
+.admin-news-yes {
+    color: var(--accent-lime);
+    font-weight: bold;
+}
+
+.admin-news-no {
+    color: var(--text-muted);
+}
+
+/* --- Admin Manage Fixtures Unique CSS Classes --- */
+.admin-fixture-add-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.admin-fixture-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.admin-fixture-form-group {
+    flex: 1;
+    min-width: 160px;
+    margin: 0;
+}
+
+.admin-fixture-date-group {
+    flex: 1;
+    min-width: 140px;
+    margin: 0;
+}
+
+.admin-fixture-time-group {
+    flex: 1;
+    min-width: 120px;
+    margin: 0;
+}
+
+.admin-fixture-venue-group {
+    flex: 1;
+    min-width: 150px;
+    margin: 0;
+}
+
+.admin-fixture-select,
+.admin-fixture-input-date,
+.admin-fixture-input-time,
+.admin-fixture-input-venue {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.admin-fixture-input-date,
+.admin-fixture-input-time,
+.admin-fixture-input-venue {
+    padding: 0.55rem;
+}
+
+.admin-fixture-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding-bottom: 0.6rem;
+}
+
+.admin-fixture-checkbox {
+    accent-color: var(--accent-lime);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.admin-fixture-checkbox-label {
+    color: var(--accent-lime);
+    cursor: pointer;
+    margin: 0;
+}
+
+.admin-fixture-submit-btn {
+    background: var(--accent-lime);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-fixture-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-fixture-header-row {
+    border-bottom: 1px solid #333;
+    text-align: center;
+}
+
+.admin-fixture-id-th,
+.admin-fixture-datetime-th,
+.admin-fixture-vs-th,
+.admin-fixture-venue-th,
+.admin-fixture-special-th,
+.admin-fixture-action-th {
+    padding: 12px;
+}
+
+.admin-fixture-home-th {
+    padding: 12px;
+    text-align: right;
+}
+
+.admin-fixture-away-th {
+    padding: 12px;
+    text-align: left;
+}
+
+.admin-fixture-body-row {
+    border-bottom: 1px solid #222;
+    text-align: center;
+}
+
+.admin-fixture-id-td {
+    padding: 10px;
+    color: var(--text-muted);
+}
+
+.admin-fixture-datetime-td {
+    padding: 10px;
+    font-size: 0.85rem;
+}
+
+.admin-fixture-home-td {
+    padding: 10px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--accent-lime);
+}
+
+.admin-fixture-vs-td {
+    padding: 10px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.admin-fixture-away-td {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    color: var(--accent-lime);
+}
+
+.admin-fixture-venue-td {
+    padding: 10px;
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+.admin-fixture-special-td {
+    padding: 10px;
+}
+
+.admin-fixture-motw-badge {
+    background: var(--accent-lime);
+    color: #000;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.admin-fixture-no-motw {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.admin-fixture-action-td {
+    padding: 10px;
+}
+
+/* Score Update Form Elements inside Table */
+.admin-fixture-score-td {
+    text-align: center;
+    min-width: 140px;
+}
+
+.admin-score-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.admin-score-input {
+    width: 42px;
+    height: 32px;
+    text-align: center;
+    background-color: var(--bg-dark, #0d0d0d);
+    border: 1px solid var(--border-color, #222);
+    color: var(--accent-lime, #00ff66);
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.admin-score-input:focus {
+    outline: none;
+    border-color: var(--accent-lime, #00ff66);
+}
+
+.admin-score-divider {
+    color: var(--text-muted, #888);
+    font-weight: bold;
+}
+
+.admin-score-save-btn {
+    background-color: var(--accent-lime, #00ff66);
+    color: #000;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s ease;
+}
+
+.admin-score-save-btn:hover {
+    background-color: #00cc52;
+}
+
+.admin-fixture-time-sub {
+    color: var(--text-muted, #888);
+    font-size: 0.75rem;
+}
+
+/* ==========================================
+   Modal Pop-up & Dynamic Scrollbar Styling
+   ========================================== */
+
+/* 1. Modal Overlay Screen */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    overflow-y: auto; /* Screen သေးပါက Modal overlay တစ်ခုလုံး scroll ဆွဲနိုင်ရန် */
+    padding: 20px 0;
+}
+
+/* 2. Modal Box Content Container */
+.modal-content {
+    background-color: var(--bg-card);
+    margin: 2% auto;
+    padding: 24px 30px;
+    border: 2px solid var(--accent-lime);
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh; /* Responsive height ထိန်းချုပ်ရန် */
+    overflow-y: auto;  /* Content များပါက Modal ထဲတွင် Scroll ဆွဲနိုင်ရန် */
+    color: var(--text-main);
+    position: relative;
+    box-shadow: 0 0 20px rgba(204, 255, 0, 0.2);
+}
+
+/* Close Icon Badge */
+.close-modal {
+    position: absolute;
+    right: 20px; 
+    top: 15px;
+    font-size: 26px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+    color: var(--text-main);
+}
+
+/* 3. Modal Form Group Controls */
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.modal-form-group label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.modal-form-group input, 
+.modal-form-group select {
+    padding: 8px 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.modal-form-group input:focus,
+.modal-form-group select:focus {
+    border-color: var(--accent-lime);
+}
+
+/* 4. Modal Action Footer Buttons */
+.modal-footer-btns {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-top: 18px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-modal-close {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 10px 18px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.btn-modal-save {
+    background-color: var(--accent-lime) !important;
+    color: #000 !important;
+    border: none !important;
+    padding: 10px 22px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    transition: opacity 0.2s ease !important;
+}
+
+.btn-modal-save:hover {
+    opacity: 0.9 !important;
+}
+
+.motw-toggle-btn {
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* 5. Custom Neon Scrollbar for Modal Box */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-lime);
+}
+
+/* Table Team Icon / Logo Circle Style */
+.table-team-icon, .admin-club-icon-img {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important; /* ပုံအပြည့်ပေါ်စေရန် contain သုံးထားသည် */
+    border-radius: 50% !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    background-color: #fff;
+    padding: 3px; /* အဝိုင်းဘောင်အတွင်း လိုဂိုမကပ်သွားစေရန် */
+    border: 1px solid #ddd;
 }

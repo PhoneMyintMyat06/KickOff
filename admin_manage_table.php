@@ -11,61 +11,122 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 $message = '';
 $error = '';
 
-// 1. Delete Team Logic
-if (isset($_GET['delete_id'])) {
-    $deleteID = intval($_GET['delete_id']);
-    $stmt = $conn->prepare("DELETE FROM leaguetable WHERE tableID = ?");
-    $stmt->bind_param("i", $deleteID);
-    if ($stmt->execute()) {
-        $message = "Team deleted successfully from table!";
-    } else {
-        $error = "Failed to delete team.";
-    }
+// Helper Function: Check Table
+function tableExists($conn, $tableName) {
+    $res = $conn->query("SHOW TABLES LIKE '$tableName'");
+    return ($res && $res->num_rows > 0);
 }
 
-// 2. Update Team Stats Logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_team'])) {
-    $tableID = intval($_POST['team_id']);
-    $played = intval($_POST['played']);
-    $won = intval($_POST['won']);
-    $drawn = intval($_POST['drawn']);
-    $lost = intval($_POST['lost']);
-    $gf = intval($_POST['gf']);
-    $ga = intval($_POST['ga']);
+// Auto Recalculate Table Stats from Fixtures & MatchResult History
+if (isset($_POST['recalculate_table'])) {
+    if (tableExists($conn, 'leaguetable') && tableExists($conn, 'fixture') && tableExists($conn, 'matchresult')) {
+        // Reset all table stats to 0 first
+        $conn->query("UPDATE leaguetable SET played=0, won=0, drawn=0, lost=0, gf=0, ga=0, gd=0, points=0");
 
-    // Auto-calculate Points and Goal Difference
-    $gd = $gf - $ga;
-    $pts = ($won * 3) + ($drawn * 1);
+        // Fetch finished fixtures with scores from matchresult table
+        $sql = "SELECT f.homeTeamID, f.awayTeamID, mr.homeScore, mr.awayScore 
+                FROM fixture f 
+                JOIN matchresult mr ON f.fixtureID = mr.fixtureID 
+                WHERE mr.homeScore IS NOT NULL AND mr.awayScore IS NOT NULL";
+        $fixturesRes = $conn->query($sql);
+        
+        if ($fixturesRes && $fixturesRes->num_rows > 0) {
+            while ($fix = $fixturesRes->fetch_assoc()) {
+                $hID = $fix['homeTeamID'];
+                $aID = $fix['awayTeamID'];
+                $hScore = intval($fix['homeScore']);
+                $aScore = intval($fix['awayScore']);
 
-    $stmt = $conn->prepare("UPDATE leaguetable SET played = ?, won = ?, drawn = ?, lost = ?, gf = ?, ga = ?, gd = ?, points = ? WHERE tableID = ?");
-    $stmt->bind_param("iiiiiiiii", $played, $won, $drawn, $lost, $gf, $ga, $gd, $pts, $tableID);
-    
-    if ($stmt->execute()) {
-        $message = "Team stats updated successfully!";
-    } else {
-        $error = "Failed to update stats.";
-    }
-}
+                // Home Team Outcome
+                $hWon = ($hScore > $aScore) ? 1 : 0;
+                $hDrawn = ($hScore == $aScore) ? 1 : 0;
+                $hLost = ($hScore < $aScore) ? 1 : 0;
+                $hPts = ($hWon * 3) + ($hDrawn * 1);
 
-// 3. Add New Team Logic
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_team'])) {
-    $teamName = trim($_POST['team_name']);
+                // Away Team Outcome
+                $aWon = ($aScore > $hScore) ? 1 : 0;
+                $aDrawn = ($aScore == $hScore) ? 1 : 0;
+                $aLost = ($aScore < $hScore) ? 1 : 0;
+                $aPts = ($aWon * 3) + ($aDrawn * 1);
 
-    if (!empty($teamName)) {
-        $stmt = $conn->prepare("INSERT INTO leaguetable (teamName, played, won, drawn, lost, gf, ga, gd, points) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0)");
-        $stmt->bind_param("s", $teamName);
-        if ($stmt->execute()) {
-            $message = "New team added to league table!";
+                // Update Home Team
+                $conn->query("UPDATE leaguetable SET 
+                    played = played + 1, won = won + $hWon, drawn = drawn + $hDrawn, lost = lost + $hLost,
+                    gf = gf + $hScore, ga = ga + $aScore, gd = gf - ga, points = points + $hPts 
+                    WHERE teamID = $hID");
+
+                // Update Away Team
+                $conn->query("UPDATE leaguetable SET 
+                    played = played + 1, won = won + $aWon, drawn = drawn + $aDrawn, lost = lost + $aLost,
+                    gf = gf + $aScore, ga = ga + $hScore, gd = gf - ga, points = points + $aPts 
+                    WHERE teamID = $aID");
+            }
+
+            // Final pass to ensure all GD values match exact (gf - ga) for safety
+            $conn->query("UPDATE leaguetable SET gd = gf - ga");
+
+            $message = "League table recalculated successfully from match results!";
         } else {
-            $error = "Error adding team: " . $conn->error;
+            $error = "No match results found in database to calculate stats.";
         }
     } else {
-        $error = "Team Name is required.";
+        $error = "Required database tables do not exist.";
     }
 }
 
-// Fetch All Teams Sorted by Points & GD
-$tableResult = $conn->query("SELECT * FROM leaguetable ORDER BY points DESC, gd DESC, won DESC");
+// 1. Delete Team from Standings
+if (isset($_GET['delete_id'])) {
+    $deleteID = intval($_GET['delete_id']);
+    if (tableExists($conn, 'leaguetable')) {
+        $stmt = $conn->prepare("DELETE FROM leaguetable WHERE tableID = ?");
+        $stmt->bind_param("i", $deleteID);
+        if ($stmt->execute()) {
+            $message = "Team removed from standings table!";
+        } else {
+            $error = "Failed to remove team.";
+        }
+        $stmt->close();
+    }
+}
+
+// 2. Add Team to Table
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_team'])) {
+    $teamID = intval($_POST['team_id']);
+
+    if ($teamID > 0 && tableExists($conn, 'leaguetable')) {
+        $checkStmt = $conn->prepare("SELECT tableID FROM leaguetable WHERE teamID = ?");
+        $checkStmt->bind_param("i", $teamID);
+        $checkStmt->execute();
+        if ($checkStmt->get_result()->num_rows > 0) {
+            $error = "Team already exists in table!";
+        } else {
+            $stmt = $conn->prepare("INSERT INTO leaguetable (teamID, played, won, drawn, lost, gf, ga, gd, points) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0)");
+            $stmt->bind_param("i", $teamID);
+            if ($stmt->execute()) {
+                $message = "Team added to standings!";
+            } else {
+                $error = "Error adding team: " . $conn->error;
+            }
+            $stmt->close();
+        }
+        $checkStmt->close();
+    } else {
+        $error = "Please select a valid team.";
+    }
+}
+
+// Fetch Registered Teams
+$teamsListRes = tableExists($conn, 'Team') ? $conn->query("SELECT teamID, teamName FROM Team ORDER BY teamName ASC") : null;
+
+// Fetch Standings
+$tableResult = null;
+if (tableExists($conn, 'leaguetable') && tableExists($conn, 'Team')) {
+    $sql = "SELECT lt.*, t.teamName, t.teamIcon 
+            FROM leaguetable lt 
+            JOIN Team t ON lt.teamID = t.teamID 
+            ORDER BY lt.points DESC, lt.gd DESC, lt.won DESC";
+    $tableResult = $conn->query($sql);
+}
 ?>
 
 <!DOCTYPE html>
@@ -81,15 +142,16 @@ $tableResult = $conn->query("SELECT * FROM leaguetable ORDER BY points DESC, gd 
 
     <header class="navbar">
         <div class="logo">
-            <h2>KICK<span>OFF</span> <small style="font-size:0.6rem; color:var(--text-muted);">[ADMIN]</small></h2>
+            <h2>KICK<span>OFF</span> <small class="admin-badge-text">[ADMIN]</small></h2>
         </div>
         <nav>
             <ul class="nav-links">
                 <li><a href="admin_dashboard.php">Dashboard</a></li>
+                <li><a href="admin_manage_teams.php">Manage Teams</a></li>
                 <li><a href="admin_manage_news.php">Manage News</a></li>
                 <li><a href="admin_manage_fixtures.php">Manage Fixtures</a></li>
                 <li><a href="admin_manage_table.php" class="active">Manage Table</a></li>
-                <li><a href="admin_logout.php" style="color: #ff4d4d;">Logout</a></li>
+                <li><a href="admin_logout.php" class="logout-link">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -99,76 +161,93 @@ $tableResult = $conn->query("SELECT * FROM leaguetable ORDER BY points DESC, gd 
             <h2 class="section-title">Manage <span>League Table</span></h2>
 
             <?php if (!empty($message)): ?>
-                <div class="alert-success" style="color:var(--accent-lime); background:rgba(204,255,0,0.1); padding:0.8rem; border-radius:4px; margin-bottom:1rem; border:1px solid var(--accent-lime);"><?php echo $message; ?></div>
+                <div class="alert-success admin-msg-success"><?php echo $message; ?></div>
             <?php endif; ?>
             <?php if (!empty($error)): ?>
-                <div class="alert-error" style="margin-bottom:1rem;"><?php echo $error; ?></div>
+                <div class="alert-error admin-msg-error"><?php echo $error; ?></div>
             <?php endif; ?>
 
-            <!-- Add Team Form -->
-            <div class="card" style="margin-bottom: 2rem;">
-                <h3 style="color: var(--accent-lime); margin-bottom: 1rem;"><i class="fa-solid fa-shield-halved"></i> Add New Team</h3>
-                <form action="admin_manage_table.php" method="POST" class="login-form" style="display:flex; gap:1rem; align-items:flex-end;">
-                    <div class="form-group" style="flex:1; margin:0;">
-                        <label>Team Name</label>
-                        <input type="text" name="team_name" placeholder="e.g. Manchester City" required>
-                    </div>
-                    <button type="submit" name="add_team" class="btn-submit" style="width:auto; padding:0.8rem 1.5rem;">Add Team</button>
-                </form>
+            <div class="admin-table-top-grid">
+                <!-- Add Team Form -->
+                <div class="card admin-table-add-card">
+                    <h3 class="admin-form-heading"><i class="fa-solid fa-plus-circle"></i> Add Team to Standings</h3>
+                    <form action="admin_manage_table.php" method="POST" class="admin-table-add-form">
+                        <div class="form-group admin-table-select-group">
+                            <label class="admin-form-label">Select Registered Team</label>
+                            <select name="team_id" required class="admin-form-select">
+                                <option value="">-- Choose Team --</option>
+                                <?php if($teamsListRes): while ($t = $teamsListRes->fetch_assoc()): ?>
+                                    <option value="<?php echo $t['teamID']; ?>"><?php echo htmlspecialchars($t['teamName']); ?></option>
+                                <?php endwhile; endif; ?>
+                            </select>
+                        </div>
+                        <button type="submit" name="add_team" class="admin-submit-btn admin-table-add-btn">Add to Table</button>
+                    </form>
+                </div>
+
+                <!-- Auto Calculate Button -->
+                <div class="card admin-sync-card">
+                    <h3 class="admin-form-heading"><i class="fa-solid fa-rotate"></i> Sync Stats</h3>
+                    <p class="admin-sync-desc">Auto-calculate points & goals directly from finished fixtures.</p>
+                    <form action="admin_manage_table.php" method="POST">
+                        <button type="submit" name="recalculate_table" class="admin-sync-btn"><i class="fa-solid fa-arrows-rotate"></i> Auto Recalculate</button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Existing Standings Table with Inline Edit -->
+            <!-- Existing Standings Table -->
             <div class="card table-card">
-                <h3 style="color: var(--accent-lime); padding: 1rem;"><i class="fa-solid fa-list-ol"></i> Standings & Update Stats</h3>
+                <h3 class="admin-table-heading"><i class="fa-solid fa-list-ol"></i> Standings Overview</h3>
                 <div class="table-responsive">
-                    <table class="standings-table">
+                    <table class="standings-table admin-manage-standings-table">
                         <thead>
-                            <tr>
-                                <th>Pos</th>
-                                <th class="text-left">Club</th>
-                                <th>MP</th>
-                                <th>W</th>
-                                <th>D</th>
-                                <th>L</th>
-                                <th>GF</th>
-                                <th>GA</th>
-                                <th>GD</th>
-                                <th>Pts</th>
-                                <th>Action</th>
+                            <tr class="admin-standings-header-row">
+                                <th class="admin-pos-th">POS</th>
+                                <th class="admin-club-th">CLUB</th>
+                                <th class="admin-stat-th">MP</th>
+                                <th class="admin-stat-th">W</th>
+                                <th class="admin-stat-th">D</th>
+                                <th class="admin-stat-th">L</th>
+                                <th class="admin-stat-th">GF</th>
+                                <th class="admin-stat-th">GA</th>
+                                <th class="admin-stat-th">GD</th>
+                                <th class="admin-stat-th">PTS</th>
+                                <th class="admin-action-th">ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if ($tableResult && $tableResult->num_rows > 0): $pos = 1; ?>
                                 <?php while($row = $tableResult->fetch_assoc()): ?>
-                                    <tr>
-                                        <td><strong><?php echo $pos++; ?></strong></td>
-                                        <td class="text-left" style="font-weight:600; color:var(--accent-lime);">
-                                            <?php echo htmlspecialchars($row['teamName']); ?>
+                                    <tr class="admin-standings-body-row">
+                                        <td class="admin-pos-td"><strong><?php echo $pos++; ?></strong></td>
+                                        <td class="admin-club-td">
+                                            <div class="admin-club-info-flex">
+                                                <?php if(!empty($row['teamIcon'])): ?>
+                                                    <img src="<?php echo htmlspecialchars($row['teamIcon']); ?>" alt="logo" class="admin-club-icon-img">
+                                                <?php endif; ?>
+                                                <span><?php echo htmlspecialchars($row['teamName']); ?></span>
+                                            </div>
                                         </td>
+                                        
+                                        <!-- Plain text stats view (No Inputs, No Save Button) -->
+                                        <td class="admin-stat-td"><?php echo $row['played']; ?></td>
+                                        <td class="admin-stat-td"><?php echo $row['won']; ?></td>
+                                        <td class="admin-stat-td"><?php echo $row['drawn']; ?></td>
+                                        <td class="admin-stat-td"><?php echo $row['lost']; ?></td>
+                                        <td class="admin-stat-td"><?php echo $row['gf']; ?></td>
+                                        <td class="admin-stat-td"><?php echo $row['ga']; ?></td>
+                                        <td class="admin-gd-td"><?php echo $row['gd']; ?></td>
+                                        <td class="admin-pts-td"><?php echo $row['points']; ?></td>
 
-                                        <form action="admin_manage_table.php" method="POST">
-                                            <input type="hidden" name="team_id" value="<?php echo $row['tableID']; ?>">
-                                            
-                                            <td><input type="number" name="played" value="<?php echo $row['played']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            <td><input type="number" name="won" value="<?php echo $row['won']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            <td><input type="number" name="drawn" value="<?php echo $row['drawn']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            <td><input type="number" name="lost" value="<?php echo $row['lost']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            <td><input type="number" name="gf" value="<?php echo $row['gf']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            <td><input type="number" name="ga" value="<?php echo $row['ga']; ?>" style="width:40px; text-align:center; background:var(--bg-primary); border:1px solid var(--border-color); color:#fff;"></td>
-                                            
-                                            <td style="font-size:0.85rem; color:var(--text-muted);"><?php echo $row['gd']; ?></td>
-                                            <td style="font-weight:bold; color:var(--accent-lime);"><?php echo $row['points']; ?></td>
-
-                                            <td>
-                                                <button type="submit" name="update_team" title="Save Changes" style="background:var(--accent-lime); border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-floppy-disk" style="color:#000;"></i></button>
-                                                <a href="admin_manage_table.php?delete_id=<?php echo $row['tableID']; ?>" onclick="return confirm('Are you sure you want to delete this team?');" style="color: #ff4d4d; text-decoration:none; margin-left:0.5rem;"><i class="fa-solid fa-trash"></i></a>
-                                            </td>
-                                        </form>
+                                        <td class="admin-action-td">
+                                            <!-- Delete link only, removed update form & save button -->
+                                            <a href="admin_manage_table.php?delete_id=<?php echo $row['tableID']; ?>" onclick="return confirm('Are you sure you want to remove this team from standings?');" class="admin-delete-link"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
                                     </tr>
                                 <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="11" class="no-data">No teams found in the table.</td>
+                                    <td colspan="11" class="admin-no-teams">No teams found in the table.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

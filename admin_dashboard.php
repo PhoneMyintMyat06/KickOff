@@ -7,9 +7,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
-$newsCount = $conn->query("SELECT COUNT(*) AS total FROM NewsArticle")->fetch_assoc()['total'] ?? 0;
+// 1. newsarticle Table Name စာလုံးသေးသို့ ပြင်ဆင်ထားသည်
+$newsCount = $conn->query("SELECT COUNT(*) AS total FROM newsarticle")->fetch_assoc()['total'] ?? 0;
+
+// 2. Fixture Table Case မမှန်တာ ပြင်ထားသည်
 $fixtureCount = $conn->query("SELECT COUNT(*) AS total FROM Fixture WHERE matchDate >= CURDATE()")->fetch_assoc()['total'] ?? 0;
-$teamsCount = $conn->query("SELECT COUNT(*) AS total FROM leaguetable")->fetch_assoc()['total'] ?? 0;
+
+// 3. Team Table မှ စုစုပေါင်း အသင်းအရေအတွက်ကို တိုက်ရိုက် ရေတွက်ထားသည်
+$teamsCount = $conn->query("SELECT COUNT(*) AS total FROM Team")->fetch_assoc()['total'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +35,7 @@ $teamsCount = $conn->query("SELECT COUNT(*) AS total FROM leaguetable")->fetch_a
         <nav>
             <ul class="nav-links">
                 <li><a href="admin_dashboard.php" class="active">Dashboard</a></li>
+                <li><a href="admin_manage_teams.php">Manage Teams</a></li> <!-- Team Management Link ထည့်ပေးထားသည် -->
                 <li><a href="admin_manage_news.php">Manage News</a></li>
                 <li><a href="admin_manage_fixtures.php">Manage Fixtures</a></li>
                 <li><a href="admin_manage_table.php">Manage Table</a></li>
@@ -41,7 +47,7 @@ $teamsCount = $conn->query("SELECT COUNT(*) AS total FROM leaguetable")->fetch_a
     <main class="container">
         <section class="section">
             <h2 class="section-title">Admin <span>Dashboard</span></h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['admin_user']); ?></strong>!</p>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['admin_user'] ?? 'Admin'); ?></strong>!</p>
 
             <div class="news-grid">
                 <div class="card stat-card">
