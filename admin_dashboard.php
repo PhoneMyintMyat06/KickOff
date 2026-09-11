@@ -7,13 +7,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
-// 1. newsarticle Table Name စာလုံးသေးသို့ ပြင်ဆင်ထားသည်
 $newsCount = $conn->query("SELECT COUNT(*) AS total FROM newsarticle")->fetch_assoc()['total'] ?? 0;
 
-// 2. Fixture Table Case မမှန်တာ ပြင်ထားသည်
 $fixtureCount = $conn->query("SELECT COUNT(*) AS total FROM Fixture WHERE matchDate >= CURDATE()")->fetch_assoc()['total'] ?? 0;
 
-// 3. Team Table မှ စုစုပေါင်း အသင်းအရေအတွက်ကို တိုက်ရိုက် ရေတွက်ထားသည်
 $teamsCount = $conn->query("SELECT COUNT(*) AS total FROM Team")->fetch_assoc()['total'] ?? 0;
 ?>
 
