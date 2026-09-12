@@ -217,13 +217,37 @@ body {
     .social-icons-only { justify-content: center; }
 }
 
-/* Featured Top News Image Styling */
+.featured-news-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3.5rem;
+    padding: 1.8rem;
+}
+
 .featured-news-card .news-banner {
-    width: 100%;
-    max-height: 280px;
-    object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    width: 45%;
+    max-height: 220px;
+    object-fit: contain;
+    background-color: var(--bg-primary);
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.featured-news-card .news-content {
+    flex-grow: 1;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .featured-news-card {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .featured-news-card .news-banner {
+        width: 100%;
+        max-height: 200px;
+    }
 }
 
 /* News Grid Section (news.php) */
