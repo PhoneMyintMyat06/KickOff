@@ -541,6 +541,16 @@ body {
     font-size: 1rem;
 }
 
+/* Top 4 Highlight (Green border/accent) */
+.standings-table tr.top-four {
+    border-left: 4px solid #2ecc71;
+}
+
+/* Relegation Bottom 3 Highlight (Red border/accent) */
+.standings-table tr.relegation {
+    border-left: 4px solid #e74c3c;
+}
+
 /* Admin Login Page (Preserved) */
 .admin-login-body {
     display: flex;

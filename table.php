@@ -1,12 +1,13 @@
 <?php
 require_once 'db.php';
 
-// Fetch Standings Data by joining leaguetable with Team table to get teamName and teamIcon
 $tableQuery = "SELECT lt.*, t.teamName, t.teamIcon 
                FROM leaguetable lt 
                JOIN Team t ON lt.teamID = t.teamID 
                ORDER BY lt.points DESC, lt.gd DESC, lt.won DESC";
 $tableResult = $conn->query($tableQuery);
+
+$totalTeams = $tableResult ? $tableResult->num_rows : 0;
 ?>
 
 <!DOCTYPE html>
@@ -66,8 +67,10 @@ $tableResult = $conn->query($tableQuery);
                                 <?php 
                                 $position = 1;
                                 while($row = $tableResult->fetch_assoc()): 
+                                    // Top 4 get 'top-four', bottom 3 get 'relegation'
+                                    $rowClass = ($position <= 4) ? 'top-four' : (($position > $totalTeams - 3) ? 'relegation' : '');
                                 ?>
-                                    <tr class="<?php echo ($position <= 4) ? 'top-four' : ''; ?>">
+                                    <tr class="<?php echo $rowClass; ?>">
                                         <td class="pos-cell"><?php echo $position++; ?></td>
                                         <td class="team-info-cell text-left">
                                             <?php if (!empty($row['teamIcon'])): ?>
