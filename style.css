@@ -217,6 +217,15 @@ body {
     .social-icons-only { justify-content: center; }
 }
 
+/* Featured Top News Image Styling */
+.featured-news-card .news-banner {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
 /* News Grid Section (news.php) */
 .news-grid {
     display: grid;
