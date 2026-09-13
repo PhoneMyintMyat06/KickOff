@@ -9,7 +9,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 $newsCount = $conn->query("SELECT COUNT(*) AS total FROM newsarticle")->fetch_assoc()['total'] ?? 0;
 
-$fixtureCount = $conn->query("SELECT COUNT(*) AS total FROM Fixture WHERE matchDate >= CURDATE()")->fetch_assoc()['total'] ?? 0;
+$fixtureCount = $conn->query("SELECT COUNT(*) AS total FROM Fixture")->fetch_assoc()['total'] ?? 0;
 
 $teamsCount = $conn->query("SELECT COUNT(*) AS total FROM Team")->fetch_assoc()['total'] ?? 0;
 ?>
@@ -32,7 +32,7 @@ $teamsCount = $conn->query("SELECT COUNT(*) AS total FROM Team")->fetch_assoc()[
         <nav>
             <ul class="nav-links">
                 <li><a href="admin_dashboard.php" class="active">Dashboard</a></li>
-                <li><a href="admin_manage_teams.php">Manage Teams</a></li> <!-- Team Management Link ထည့်ပေးထားသည် -->
+                <li><a href="admin_manage_teams.php">Manage Teams</a></li>
                 <li><a href="admin_manage_news.php">Manage News</a></li>
                 <li><a href="admin_manage_fixtures.php">Manage Fixtures</a></li>
                 <li><a href="admin_manage_table.php">Manage Table</a></li>
