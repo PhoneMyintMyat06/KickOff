@@ -54,7 +54,7 @@ $article = $result->fetch_assoc();
     <!-- Main Container -->
     <main class="container">
         <section class="section">
-            <a href="javascript:history.back()" class="btn-link" style="margin-bottom: 1rem; display: inline-block;">&larr; Back to News</a>
+            <a href="javascript:history.back()" class="btn-link" style="margin-bottom: 1rem; display: inline-block;">&larr; Back</a>
             
             <article class="card news-detail-card">
                 <span class="news-date">
