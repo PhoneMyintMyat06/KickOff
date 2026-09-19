@@ -18,7 +18,7 @@ CREATE TABLE Team (
     FOREIGN KEY (adminID) REFERENCES Admin(adminID)
 );
 
--- 3. Fixture Table
+-- 3. Fixture Table (Added ON DELETE CASCADE for foreign keys referencing Team)
 CREATE TABLE Fixture (
     fixtureID INT AUTO_INCREMENT PRIMARY KEY,
     homeTeamID INT,
@@ -29,8 +29,8 @@ CREATE TABLE Fixture (
     matchday INT,
     isMatchOfWeek TINYINT,
     adminID INT,
-    FOREIGN KEY (homeTeamID) REFERENCES Team(teamID),
-    FOREIGN KEY (awayTeamID) REFERENCES Team(teamID),
+    FOREIGN KEY (homeTeamID) REFERENCES Team(teamID) ON DELETE CASCADE,
+    FOREIGN KEY (awayTeamID) REFERENCES Team(teamID) ON DELETE CASCADE,
     FOREIGN KEY (adminID) REFERENCES Admin(adminID)
 );
 
@@ -46,18 +46,18 @@ CREATE TABLE NewsArticle (
     FOREIGN KEY (adminID) REFERENCES Admin(adminID)
 );
 
--- 5. MatchResult Table
+-- 5. MatchResult Table (Added ON DELETE CASCADE for Fixture reference)
 CREATE TABLE MatchResult (
     resultID INT AUTO_INCREMENT PRIMARY KEY,
     homeScore INT,
     awayScore INT,
     fixtureID INT,
     adminID INT,
-    FOREIGN KEY (fixtureID) REFERENCES Fixture(fixtureID),
+    FOREIGN KEY (fixtureID) REFERENCES Fixture(fixtureID) ON DELETE CASCADE,
     FOREIGN KEY (adminID) REFERENCES Admin(adminID)
 );
 
--- 6. LeagueTable Table
+-- 6. LeagueTable Table (Added ON DELETE CASCADE for Team and MatchResult references)
 CREATE TABLE LeagueTable (
     tableID INT AUTO_INCREMENT PRIMARY KEY,
     played INT,
@@ -70,6 +70,6 @@ CREATE TABLE LeagueTable (
     points INT,
     resultID INT,
     teamID INT,
-    FOREIGN KEY (resultID) REFERENCES MatchResult(resultID),
-    FOREIGN KEY (teamID) REFERENCES Team(teamID)
+    FOREIGN KEY (resultID) REFERENCES MatchResult(resultID) ON DELETE CASCADE,
+    FOREIGN KEY (teamID) REFERENCES Team(teamID) ON DELETE CASCADE
 );
