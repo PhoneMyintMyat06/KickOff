@@ -111,9 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_result'])) {
     }
 }
 
-// 5. Delete Fixture Logic
+// 5. Delete Fixture Logic (Safe deletion handling foreign keys if any)
 if (isset($_GET['delete_id'])) {
     $deleteID = intval($_GET['delete_id']);
+    
+    // Delete dependent match result first if foreign key constraints require it
+    $delResultStmt = $conn->prepare("DELETE FROM matchresult WHERE fixtureID = ?");
+    $delResultStmt->bind_param("i", $deleteID);
+    $delResultStmt->execute();
+    $delResultStmt->close();
+
     $stmt = $conn->prepare("DELETE FROM fixture WHERE fixtureID = ?");
     $stmt->bind_param("i", $deleteID);
     
@@ -136,10 +143,10 @@ if ($teamsRes && $teamsRes->num_rows > 0) {
 
 // Fetch All Fixtures safely
 $sql = "SELECT f.*, 
-               t1.teamName AS homeTeam, 
-               t2.teamName AS awayTeam,
-               mr.homeScore,
-               mr.awayScore 
+                t1.teamName AS homeTeam, 
+                t2.teamName AS awayTeam,
+                mr.homeScore,
+                mr.awayScore 
         FROM fixture f
         JOIN Team t1 ON f.homeTeamID = t1.teamID
         JOIN Team t2 ON f.awayTeamID = t2.teamID
@@ -297,10 +304,10 @@ $fixturesResult = $conn->query($sql);
                                             <?php endif; ?>
                                         </td>
                                         <td class="admin-fixture-action-td">
-                                            <button type="button" class="admin-score-save-btn" style="background:#007bff; margin-right:5px;" onclick='openEditModal(<?php echo json_encode($fix); ?>)'>
-                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            <button type="button" class="admin-score-save-btn" style="background:#007bff; margin-right:5px;" onclick='openEditModal(<?php echo json_encode($fix); ?>)' title="Edit Match">
+                                                <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
-                                            <a href="admin_manage_fixtures.php?delete_id=<?php echo $fix['fixtureID']; ?>" onclick="return confirm('Are you sure you want to delete this match?');" class="admin-delete-link"><i class="fa-solid fa-trash"></i> Delete</a>
+                                            <a href="admin_manage_fixtures.php?delete_id=<?php echo $fix['fixtureID']; ?>" onclick="return confirm('Are you sure you want to delete this match?');" class="admin-delete-link" title="Delete Match"><i class="fa-solid fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
