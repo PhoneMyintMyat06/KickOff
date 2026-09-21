@@ -65,9 +65,9 @@ if (isset($_POST['recalculate_table'])) {
             // Final pass to ensure all GD values match exact (gf - ga) for safety
             $conn->query("UPDATE leaguetable SET gd = gf - ga");
 
-            $message = "League table recalculated successfully from match results!";
+            $message = "League table synchronized successfully from match results!";
         } else {
-            $error = "No match results found in database to calculate stats.";
+            $error = "No match results found in database to synchronize stats.";
         }
     } else {
         $error = "Required database tables do not exist.";
@@ -185,12 +185,12 @@ if (tableExists($conn, 'leaguetable') && tableExists($conn, 'Team')) {
                     </form>
                 </div>
 
-                <!-- Auto Calculate Button -->
+                <!-- Synchronize Standings Card -->
                 <div class="card admin-sync-card">
-                    <h3 class="admin-form-heading"><i class="fa-solid fa-rotate"></i> Sync Stats</h3>
-                    <p class="admin-sync-desc">Auto-calculate points & goals directly from finished fixtures.</p>
+                    <h3 class="admin-form-heading"><i class="fa-solid fa-rotate"></i> Synchronize Standings</h3>
+                    <p class="admin-sync-desc">Recalculate points & goals automatically from finished fixtures.</p>
                     <form action="admin_manage_table.php" method="POST">
-                        <button type="submit" name="recalculate_table" class="admin-sync-btn"><i class="fa-solid fa-arrows-rotate"></i> Auto Recalculate</button>
+                        <button type="submit" name="recalculate_table" class="admin-sync-btn"><i class="fa-solid fa-arrows-rotate"></i> Synchronize Standings</button>
                     </form>
                 </div>
             </div>
@@ -229,7 +229,7 @@ if (tableExists($conn, 'leaguetable') && tableExists($conn, 'Team')) {
                                             </div>
                                         </td>
                                         
-                                        <!-- Plain text stats view (No Inputs, No Save Button) -->
+                                        <!-- Plain text stats view -->
                                         <td class="admin-stat-td"><?php echo $row['played']; ?></td>
                                         <td class="admin-stat-td"><?php echo $row['won']; ?></td>
                                         <td class="admin-stat-td"><?php echo $row['drawn']; ?></td>
@@ -240,7 +240,6 @@ if (tableExists($conn, 'leaguetable') && tableExists($conn, 'Team')) {
                                         <td class="admin-pts-td"><?php echo $row['points']; ?></td>
 
                                         <td class="admin-action-td">
-                                            <!-- Delete link only, removed update form & save button -->
                                             <a href="admin_manage_table.php?delete_id=<?php echo $row['tableID']; ?>" onclick="return confirm('Are you sure you want to remove this team from standings?');" class="admin-delete-link"><i class="fa-solid fa-trash"></i></a>
                                         </td>
                                     </tr>

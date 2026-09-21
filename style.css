@@ -220,33 +220,40 @@ body {
 .featured-news-card {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 3.5rem;
-    padding: 1.8rem;
+    align-items: stretch; /* Stretch items to match full height */
+    gap: 2rem;
+    padding: 0; /* Remove card padding so image touches the border edge if preferred, or keep card padding clean */
+    overflow: hidden; /* Clips any overflow so image respects border-radius */
 }
 
 .featured-news-card .news-banner {
     width: 45%;
-    max-height: 220px;
-    object-fit: contain;
-    background-color: var(--bg-primary);
-    border-radius: 6px;
+    height: 100%;
+    min-height: 240px;
+    object-fit: cover; 
+    background-color: transparent;
+    border-radius: 0; /* Let card rounding handle it */
     flex-shrink: 0;
 }
 
 .featured-news-card .news-content {
     flex-grow: 1;
-    padding: 0;
+    padding: 1.8rem 1.8rem 1.8rem 0; /* Padding for text side only */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
     .featured-news-card {
         flex-direction: column;
-        gap: 1.5rem;
     }
     .featured-news-card .news-banner {
         width: 100%;
-        max-height: 200px;
+        height: 200px;
+    }
+    .featured-news-card .news-content {
+        padding: 1.5rem;
     }
 }
 
