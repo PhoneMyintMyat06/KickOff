@@ -1,10 +1,10 @@
 :root {
-  --bg-primary: #0D1B2A;
-  --bg-card: #1B263B;
-  --accent-lime: #CCFF00;
-  --text-main: #E0E1DD;
-  --text-muted: #778DA9;
-  --border-color: #415A77;
+    --bg-primary: #0D1B2A;
+    --bg-card: #1B263B;
+    --accent-lime: #CCFF00;
+    --text-main: #E0E1DD;
+    --text-muted: #778DA9;
+    --border-color: #415A77;
 }
 
 * {
@@ -14,13 +14,28 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+html {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--bg-primary);
     color: var(--text-main);
     line-height: 1.6;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
 }
 
-/* Navbar */
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -33,7 +48,9 @@ body {
     z-index: 100;
 }
 
-.logo h2 span { color: var(--accent-lime); }
+.logo h2 span {
+    color: var(--accent-lime);
+}
 
 .nav-links {
     display: flex;
@@ -47,18 +64,27 @@ body {
     font-weight: 600;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover,
+.nav-links a.active {
     color: var(--accent-lime);
 }
 
-/* Container & Sections */
+/* =========================================================
+   CONTAINER & SECTIONS
+   ========================================================= */
+
 .container {
+    width: 100%;
     max-width: 1100px;
     margin: 2rem auto;
     padding: 0 1rem;
+
+    flex: 1;
 }
 
-.section { margin-bottom: 2.5rem; }
+.section {
+    margin-bottom: 2.5rem;
+}
 
 .section-title {
     font-size: 1.5rem;
@@ -67,7 +93,9 @@ body {
     padding-left: 0.5rem;
 }
 
-.section-title span { color: var(--accent-lime); }
+.section-title span {
+    color: var(--accent-lime);
+}
 
 .card {
     background-color: var(--bg-card);
@@ -84,9 +112,16 @@ body {
     font-weight: bold;
 }
 
-.no-data { color: var(--text-muted); text-align: center; font-style: italic; }
+.no-data {
+    color: var(--text-muted);
+    text-align: center;
+    font-style: italic;
+}
 
-/* Custom Styling for Match of the Week Logos */
+/* =========================================================
+   MATCH OF THE WEEK
+   ========================================================= */
+
 .motw-card {
     padding: 1.5rem 2rem;
 }
@@ -115,40 +150,56 @@ body {
     color: var(--accent-lime);
 }
 
-/* Footer */
+/* =========================================================
+   FOOTER
+   Horizontal on all screen sizes
+   ========================================================= */
+
 .footer {
     background-color: #081019;
     border-top: 1px solid var(--border-color);
-    margin-top: 4rem;
-    padding: 3.5rem 5% 1.5rem 5%;
+    margin-top: auto;
+    padding: 2rem 5% 1rem 5%;
 }
 
 .footer-container {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 3.5rem;
-    max-width: 1100px;
-    margin: 0 auto 2.5rem auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 1.5rem auto;
 }
 
-.footer-info h3 span { color: var(--accent-lime); }
-.footer-info p { 
-    color: var(--text-muted); 
-    font-size: 0.88rem; 
-    margin-top: 0.6rem;
+.footer-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+.footer-info h3 span {
+    color: var(--accent-lime);
+}
+
+.footer-info p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-top: 0.4rem;
     line-height: 1.5;
 }
 
 .footer-social {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
 }
 
 .social-icons-only {
     display: flex;
+    flex-direction: row;
     gap: 1.2rem;
     justify-content: center;
     align-items: center;
@@ -160,6 +211,7 @@ body {
     align-items: center;
     width: 38px;
     height: 38px;
+    flex-shrink: 0;
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-main);
@@ -177,6 +229,7 @@ body {
 }
 
 .footer-admin {
+    flex: 1;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -191,6 +244,7 @@ body {
     text-decoration: none;
     border-radius: 4px;
     font-size: 0.75rem;
+    white-space: nowrap;
     transition: all 0.3s;
 }
 
@@ -201,63 +255,52 @@ body {
 
 .footer-bottom {
     text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 1.2rem;
     font-size: 0.8rem;
     color: var(--text-muted);
 }
 
-@media (max-width: 768px) {
-    .footer-container { 
-        grid-template-columns: 1fr; 
-        gap: 2rem; 
-        text-align: center; 
-    }
-    .footer-admin { justify-content: center; }
-    .social-icons-only { justify-content: center; }
-}
+/* =========================================================
+   FEATURED / TOP NEWS
+   Horizontal layout:
+   IMAGE | NEWS CONTENT
+   ========================================================= */
 
 .featured-news-card {
     display: flex;
     flex-direction: row;
-    align-items: stretch; /* Stretch items to match full height */
-    gap: 2rem;
-    padding: 0; /* Remove card padding so image touches the border edge if preferred, or keep card padding clean */
-    overflow: hidden; /* Clips any overflow so image respects border-radius */
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
 }
 
 .featured-news-card .news-banner {
     width: 45%;
+    min-width: 45%;
     height: 100%;
     min-height: 240px;
-    object-fit: cover; 
+    object-fit: cover;
     background-color: transparent;
-    border-radius: 0; /* Let card rounding handle it */
+    border-radius: 0;
     flex-shrink: 0;
 }
 
 .featured-news-card .news-content {
-    flex-grow: 1;
-    padding: 1.8rem 1.8rem 1.8rem 0; /* Padding for text side only */
+    flex: 1;
+    min-width: 0;
+    padding: 1.8rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-@media (max-width: 768px) {
-    .featured-news-card {
-        flex-direction: column;
-    }
-    .featured-news-card .news-banner {
-        width: 100%;
-        height: 200px;
-    }
-    .featured-news-card .news-content {
-        padding: 1.5rem;
-    }
-}
+/* =========================================================
+   NEWS GRID
+   ========================================================= */
 
-/* News Grid Section (news.php) */
 .news-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -337,7 +380,12 @@ body {
     grid-column: 1 / -1;
 }
 
-/* Fixtures & Results Section (results.php) */
+/* =========================================================
+   FIXTURES & RESULTS
+   Horizontal layout:
+   HOME | HOME LOGO | MATCH INFO | AWAY LOGO | AWAY
+   ========================================================= */
+
 .fixtures-wrapper {
     display: flex;
     flex-direction: column;
@@ -363,9 +411,13 @@ body {
 
 .fixture-card {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
     padding: 1rem 1.5rem;
+    width: 100%;
+    min-width: 0;
     transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -377,8 +429,9 @@ body {
 .fixture-team {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    width: 38%;
+    gap: 0.8rem;
+    width: 34%;
+    min-width: 0;
 }
 
 .home-team {
@@ -394,18 +447,21 @@ body {
 .fixture-icon {
     width: 40px;
     height: 40px;
+    flex-shrink: 0;
     object-fit: contain;
 }
 
 .icon-placeholder {
     width: 40px;
     height: 40px;
+    flex-shrink: 0;
 }
 
 .team-name {
     font-size: 1rem;
     font-weight: 600;
     color: var(--text-main);
+    overflow-wrap: anywhere;
 }
 
 .fixture-center {
@@ -413,7 +469,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 24%;
+    width: 32%;
+    min-width: 100px;
+    flex-shrink: 0;
 }
 
 .score-box {
@@ -445,29 +503,10 @@ body {
     letter-spacing: 1px;
 }
 
-@media (max-width: 768px) {
-    .fixture-card {
-        flex-direction: column;
-        gap: 0.8rem;
-        padding: 1.2rem;
-    }
+/* =========================================================
+   STANDINGS TABLE
+   ========================================================= */
 
-    .fixture-team {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .home-team {
-        flex-direction: row-reverse;
-    }
-
-    .fixture-center {
-        width: 100%;
-    }
-}
-
-/* Standings Table Styling (table.php) */
 .table-card {
     padding: 0.5rem;
     overflow: hidden;
@@ -476,6 +515,7 @@ body {
 .table-responsive {
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .standings-table {
@@ -483,6 +523,7 @@ body {
     border-collapse: collapse;
     text-align: center;
     font-size: 0.9rem;
+    min-width: 650px;
 }
 
 .standings-table th,
@@ -518,9 +559,15 @@ body {
 }
 
 .table-team-icon {
-    width: 26px;
-    height: 26px;
-    object-fit: contain;
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    background-color: #fff;
+    padding: 3px;
+    border: 1px solid #ddd;
 }
 
 .team-title {
@@ -548,17 +595,18 @@ body {
     font-size: 1rem;
 }
 
-/* Top 4 Highlight (Green border/accent) */
 .standings-table tr.top-four {
     border-left: 4px solid #2ecc71;
 }
 
-/* Relegation Bottom 3 Highlight (Red border/accent) */
 .standings-table tr.relegation {
     border-left: 4px solid #e74c3c;
 }
 
-/* Admin Login Page (Preserved) */
+/* =========================================================
+   ADMIN LOGIN
+   ========================================================= */
+
 .admin-login-body {
     display: flex;
     justify-content: center;
@@ -671,7 +719,10 @@ body {
     color: var(--text-muted);
 }
 
-/* --- Admin Manage Teams Unique Outline CSS Classes --- */
+/* =========================================================
+   ADMIN COMMON
+   ========================================================= */
+
 .admin-badge-text {
     font-size: 0.6rem;
     color: var(--text-muted);
@@ -855,7 +906,10 @@ body {
     color: var(--text-muted);
 }
 
-/* --- Admin Manage Table Unique CSS Classes --- */
+/* =========================================================
+   ADMIN MANAGE TABLE
+   ========================================================= */
+
 .admin-table-top-grid {
     display: flex;
     gap: 1.5rem;
@@ -923,6 +977,7 @@ body {
 .admin-manage-standings-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 800px;
 }
 
 .admin-standings-header-row {
@@ -973,9 +1028,15 @@ body {
 }
 
 .admin-club-icon-img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    background-color: #fff;
+    padding: 3px;
+    border: 1px solid #ddd;
 }
 
 .admin-input-td {
@@ -1021,19 +1082,10 @@ body {
     color: #000;
 }
 
-.admin-club-icon-img {
-    width: 32px !important;
-    height: 32px !important;
-    object-fit: contain !important; /* ပုံအပြည့်ပေါ်စေရန် contain သုံးထားသည် */
-    border-radius: 50% !important;
-    vertical-align: middle;
-    margin-right: 8px;
-    background-color: #fff;
-    padding: 3px; /* အဝိုင်းဘောင်အတွင်း လိုဂိုမကပ်သွားစေရန် */
-    border: 1px solid #ddd;
-}
+/* =========================================================
+   ADMIN MANAGE NEWS
+   ========================================================= */
 
-/* --- Admin Manage News Unique CSS Classes --- */
 .admin-news-add-card {
     margin-bottom: 2rem;
     padding: 1.5rem;
@@ -1102,6 +1154,7 @@ body {
 .admin-manage-news-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 750px;
 }
 
 .admin-news-header-row {
@@ -1109,7 +1162,9 @@ body {
     text-align: left;
 }
 
-.admin-news-id-th, .admin-news-img-th, .admin-news-date-th {
+.admin-news-id-th,
+.admin-news-img-th,
+.admin-news-date-th {
     padding: 10px;
 }
 
@@ -1117,7 +1172,8 @@ body {
     padding: 10px;
 }
 
-.admin-news-top-th, .admin-news-action-th {
+.admin-news-top-th,
+.admin-news-action-th {
     padding: 10px;
     text-align: center;
 }
@@ -1126,7 +1182,9 @@ body {
     border-bottom: 1px solid #222;
 }
 
-.admin-news-id-td, .admin-news-img-td, .admin-news-date-td {
+.admin-news-id-td,
+.admin-news-img-td,
+.admin-news-date-td {
     padding: 10px;
 }
 
@@ -1155,7 +1213,8 @@ body {
     color: var(--text-muted);
 }
 
-.admin-news-top-td, .admin-news-action-td {
+.admin-news-top-td,
+.admin-news-action-td {
     text-align: center;
     padding: 10px;
 }
@@ -1169,7 +1228,10 @@ body {
     color: var(--text-muted);
 }
 
-/* --- Admin Manage Fixtures Unique CSS Classes --- */
+/* =========================================================
+   ADMIN MANAGE FIXTURES
+   ========================================================= */
+
 .admin-fixture-add-card {
     margin-bottom: 2rem;
     padding: 1.5rem;
@@ -1258,6 +1320,7 @@ body {
 .admin-fixture-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 1000px;
 }
 
 .admin-fixture-header-row {
@@ -1347,7 +1410,6 @@ body {
     padding: 10px;
 }
 
-/* Score Update Form Elements inside Table */
 .admin-fixture-score-td {
     text-align: center;
     min-width: 140px;
@@ -1364,9 +1426,9 @@ body {
     width: 42px;
     height: 32px;
     text-align: center;
-    background-color: var(--bg-dark, #0d0d0d);
-    border: 1px solid var(--border-color, #222);
-    color: var(--accent-lime, #00ff66);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--accent-lime);
     border-radius: 4px;
     font-weight: bold;
     font-size: 0.9rem;
@@ -1374,16 +1436,16 @@ body {
 
 .admin-score-input:focus {
     outline: none;
-    border-color: var(--accent-lime, #00ff66);
+    border-color: var(--accent-lime);
 }
 
 .admin-score-divider {
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-weight: bold;
 }
 
 .admin-score-save-btn {
-    background-color: var(--accent-lime, #00ff66);
+    background-color: var(--accent-lime);
     color: #000;
     border: none;
     padding: 0.3rem 0.5rem;
@@ -1398,30 +1460,28 @@ body {
 }
 
 .admin-fixture-time-sub {
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-size: 0.75rem;
 }
 
-/* ==========================================
-   Modal Pop-up & Dynamic Scrollbar Styling
-   ========================================== */
+/* =========================================================
+   MODAL
+   ========================================================= */
 
-/* 1. Modal Overlay Screen */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    height: 100%; 
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(5px);
-    overflow-y: auto; /* Screen သေးပါက Modal overlay တစ်ခုလုံး scroll ဆွဲနိုင်ရန် */
+    overflow-y: auto;
     padding: 20px 0;
 }
 
-/* 2. Modal Box Content Container */
 .modal-content {
     background-color: var(--bg-card);
     margin: 2% auto;
@@ -1430,17 +1490,16 @@ body {
     border-radius: 10px;
     width: 90%;
     max-width: 500px;
-    max-height: 85vh; /* Responsive height ထိန်းချုပ်ရန် */
-    overflow-y: auto;  /* Content များပါက Modal ထဲတွင် Scroll ဆွဲနိုင်ရန် */
+    max-height: 85vh;
+    overflow-y: auto;
     color: var(--text-main);
     position: relative;
     box-shadow: 0 0 20px rgba(204, 255, 0, 0.2);
 }
 
-/* Close Icon Badge */
 .close-modal {
     position: absolute;
-    right: 20px; 
+    right: 20px;
     top: 15px;
     font-size: 26px;
     cursor: pointer;
@@ -1452,7 +1511,6 @@ body {
     color: var(--text-main);
 }
 
-/* 3. Modal Form Group Controls */
 .modal-form-group {
     display: flex;
     flex-direction: column;
@@ -1466,7 +1524,7 @@ body {
     font-weight: 600;
 }
 
-.modal-form-group input, 
+.modal-form-group input,
 .modal-form-group select {
     padding: 8px 12px;
     background-color: var(--bg-primary);
@@ -1482,7 +1540,6 @@ body {
     border-color: var(--accent-lime);
 }
 
-/* 4. Modal Action Footer Buttons */
 .modal-footer-btns {
     display: flex !important;
     justify-content: flex-end !important;
@@ -1528,7 +1585,8 @@ body {
     display: inline-block;
 }
 
-/* 5. Custom Neon Scrollbar for Modal Box */
+/* Modal scrollbar */
+
 .modal-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -1547,15 +1605,654 @@ body {
     background: var(--accent-lime);
 }
 
-/* Table Team Icon / Logo Circle Style */
-.table-team-icon, .admin-club-icon-img {
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+/* =========================================================
+   ADMIN RESPONSIVE LAYOUT
+   The administration pages retain their desktop navigation and data-table
+   structure at every size. Navigation and wide data tables scroll inside
+   their own areas instead of forcing the page itself to overflow.
+   ========================================================= */
+
+body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar nav {
+    min-width: 0;
+}
+
+body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links {
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar {
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.8rem 3%;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar nav {
+        flex: 1;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        padding-bottom: 0.25rem;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links {
+        width: max-content;
+        gap: 1rem;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links a {
+        display: block;
+        padding: 0.2rem 0;
+        font-size: 0.85rem;
+    }
+
+    .admin-fixture-form-group {
+        min-width: min(220px, 100%);
+    }
+
+    .admin-fixture-date-group,
+    .admin-fixture-time-group,
+    .admin-fixture-venue-group {
+        min-width: min(180px, 100%);
+    }
+
+    .admin-manage-standings-table,
+    .admin-manage-news-table,
+    .admin-fixture-table {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 0.8rem 3%;
+    }
+
+    .nav-links {
+        gap: 1rem;
+    }
+
+    .container {
+        padding: 0 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    /* TOP NEWS - KEEP HORIZONTAL */
+
+    .featured-news-card {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .featured-news-card .news-banner {
+        width: 42%;
+        min-width: 42%;
+        min-height: 190px;
+        height: auto;
+    }
+
+    .featured-news-card .news-content {
+        padding: 1.2rem;
+    }
+
+    .featured-news-card .news-content h2 {
+        font-size: 1.15rem;
+    }
+
+    .featured-news-card .news-content p {
+        font-size: 0.8rem;
+    }
+
+    /* FIXTURES - KEEP HORIZONTAL */
+
+    .fixture-card {
+        flex-direction: row;
+        padding: 0.9rem 0.8rem;
+        gap: 0.3rem;
+    }
+
+    .fixture-team {
+        width: 34%;
+        gap: 0.5rem;
+    }
+
+    .fixture-center {
+        width: 32%;
+        min-width: 80px;
+    }
+
+    .fixture-icon,
+    .icon-placeholder {
+        width: 34px;
+        height: 34px;
+    }
+
+    .team-name {
+        font-size: 0.82rem;
+    }
+
+    .score-box {
+        padding: 3px 9px;
+        gap: 0.35rem;
+    }
+
+    .score {
+        font-size: 1rem;
+    }
+
+    .score-divider {
+        font-size: 0.8rem;
+    }
+
+    .match-status-badge {
+        font-size: 0.6rem;
+    }
+
+    /* FOOTER - KEEP HORIZONTAL */
+
+    .footer {
+        padding: 1.8rem 3% 1rem 3%;
+    }
+
+    .footer-container {
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .footer-info {
+        flex: 1;
+    }
+
+    .footer-info h3 {
+        font-size: 1rem;
+    }
+
+    .footer-info p {
+        font-size: 0.72rem;
+    }
+
+    .footer-social {
+        flex: 0 0 auto;
+    }
+
+    .social-icons-only {
+        gap: 0.6rem;
+    }
+
+    .social-icon-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+
+    .footer-admin {
+        flex: 0 0 auto;
+    }
+
+    .admin-login-btn {
+        font-size: 0.68rem;
+        padding: 5px 8px;
+    }
+
+    .admin-news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .login-card {
+        width: calc(100% - 2rem);
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar {
+        display: block;
+        padding: 0.7rem 0;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .logo {
+        padding: 0 0.75rem 0.45rem;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar nav {
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0.45rem 0.75rem 0.15rem;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links {
+        gap: 0.85rem;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links a {
+        font-size: 0.78rem;
+    }
+
+    .navbar {
+        padding: 0.7rem 3%;
+    }
+
+    .logo h2 {
+        font-size: 1.15rem;
+    }
+
+    .nav-links {
+        gap: 0.55rem;
+    }
+
+    .nav-links a {
+        font-size: 0.72rem;
+    }
+
+    .container {
+        padding: 0 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .section {
+        margin-bottom: 1.7rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+    }
+
+    /* TOP NEWS */
+
+    .featured-news-card {
+        flex-direction: row;
+    }
+
+    .featured-news-card .news-banner {
+        width: 40%;
+        min-width: 40%;
+        min-height: 150px;
+    }
+
+    .featured-news-card .news-content {
+        padding: 0.8rem;
+    }
+
+    .featured-news-card .news-content h2,
+    .featured-news-card .news-content h3 {
+        font-size: 0.9rem;
+        line-height: 1.3;
+    }
+
+    .featured-news-card .news-content p {
+        font-size: 0.68rem;
+        line-height: 1.35;
+        margin-bottom: 0.4rem;
+    }
+
+    .featured-news-card .news-content .news-date {
+        font-size: 0.6rem;
+        margin-bottom: 0.3rem;
+    }
+
+    /* FIXTURES */
+
+    .fixture-card {
+        flex-direction: row;
+        padding: 0.7rem 0.45rem;
+        gap: 0.15rem;
+    }
+
+    .fixture-team {
+        width: 35%;
+        gap: 0.3rem;
+    }
+
+    .fixture-center {
+        width: 30%;
+        min-width: 65px;
+    }
+
+    .fixture-icon,
+    .icon-placeholder {
+        width: 27px;
+        height: 27px;
+    }
+
+    .team-name {
+        font-size: 0.67rem;
+        line-height: 1.2;
+    }
+
+    .score-box {
+        padding: 2px 6px;
+        gap: 0.25rem;
+    }
+
+    .score {
+        font-size: 0.82rem;
+    }
+
+    .score-divider {
+        font-size: 0.65rem;
+    }
+
+    .match-status-badge {
+        font-size: 0.48rem;
+        letter-spacing: 0.5px;
+    }
+
+    .date-divider {
+        font-size: 0.85rem;
+    }
+
+    /* NEWS GRID */
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* STANDINGS */
+
+    .standings-table {
+        min-width: 600px;
+        font-size: 0.75rem;
+    }
+
+    .standings-table th,
+    .standings-table td {
+        padding: 0.55rem 0.4rem;
+    }
+
+    /* FOOTER */
+
+    .footer {
+        padding: 1.4rem 2% 0.8rem 2%;
+    }
+
+    .footer-container {
+        flex-direction: row;
+        gap: 0.4rem;
+        align-items: center;
+    }
+
+    .footer-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .footer-info h3 {
+        font-size: 0.75rem;
+    }
+
+    .footer-info p {
+        font-size: 0.55rem;
+        line-height: 1.25;
+        margin-top: 0.2rem;
+    }
+
+    .footer-social {
+        flex: 0 0 auto;
+    }
+
+    .social-icons-only {
+        gap: 0.3rem;
+    }
+
+    .social-icon-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.65rem;
+    }
+
+    .footer-admin {
+        flex: 0 0 auto;
+    }
+
+    .admin-login-btn {
+        padding: 4px 6px;
+        font-size: 0.52rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.58rem;
+        padding-top: 0.8rem;
+    }
+
+    /* ADMIN */
+
+    .login-card {
+        padding: 1.5rem;
+    }
+
+    .admin-team-form,
+    .admin-fixture-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-input-group,
+    .admin-input-group-file,
+    .admin-fixture-form-group,
+    .admin-fixture-date-group,
+    .admin-fixture-time-group,
+    .admin-fixture-venue-group {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .admin-table-top-grid {
+        flex-direction: column;
+    }
+
+    .admin-table-add-card,
+    .admin-sync-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .admin-table-add-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-form-card,
+    .admin-news-add-card,
+    .admin-fixture-add-card,
+    .admin-table-add-card,
+    .admin-sync-card {
+        padding: 1rem;
+    }
+
+    .admin-submit-btn,
+    .admin-fixture-submit-btn,
+    .admin-table-add-btn,
+    .admin-sync-btn {
+        min-height: 42px;
+        width: 100%;
+    }
+
+    .admin-table-heading {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .table-responsive {
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem 0.5rem;
+        scrollbar-color: var(--border-color) transparent;
+    }
+
+    .modal-content {
+        width: 94%;
+        padding: 20px;
+    }
+}
+
+/* Very small phones */
+
+@media (max-width: 360px) {
+
+    .logo h2 {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        gap: 0.35rem;
+    }
+
+    .nav-links a {
+        font-size: 0.62rem;
+    }
+
+    .fixture-card {
+        padding: 0.6rem 0.25rem;
+    }
+
+    .fixture-icon,
+    .icon-placeholder {
+        width: 24px;
+        height: 24px;
+    }
+
+    .team-name {
+        font-size: 0.6rem;
+    }
+
+    .fixture-center {
+        min-width: 55px;
+    }
+
+    .score-box {
+        padding: 2px 4px;
+    }
+
+    .score {
+        font-size: 0.72rem;
+    }
+
+    .featured-news-card .news-banner {
+        min-height: 130px;
+    }
+
+    .featured-news-card .news-content {
+        padding: 0.6rem;
+    }
+
+    .featured-news-card .news-content h2,
+    .featured-news-card .news-content h3 {
+        font-size: 0.78rem;
+    }
+
+    .featured-news-card .news-content p {
+        font-size: 0.58rem;
+    }
+
+    .social-icon-btn {
+        width: 25px;
+        height: 25px;
+        font-size: 0.58rem;
+    }
+
+    .admin-login-btn {
+        font-size: 0.48rem;
+        padding: 3px 5px;
+    }
+}
+
+/* Keep the admin panel's desktop-style horizontal layout on smaller screens.
+   Each wide area scrolls locally rather than wrapping its controls or tabs. */
+@media (max-width: 900px) {
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar nav {
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links li,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .navbar .nav-links a {
+        white-space: nowrap;
+        flex-wrap: nowrap;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-team-form,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-form,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-table-add-form,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-table-top-grid {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-input-group,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-input-group-file,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-form-group,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-date-group,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-time-group,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-venue-group,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-table-add-card,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-sync-card {
+        flex: 0 0 auto;
+        min-width: 220px;
+    }
+
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-submit-btn,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-fixture-submit-btn,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-table-add-btn,
+    body:has(.admin-form-card, .admin-news-add-card, .admin-fixture-add-card, .admin-table-top-grid, .stat-card) .admin-sync-btn {
+        width: auto;
+        white-space: nowrap;
+    }
+
+    body:has(.stat-card) .news-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        grid-template-columns: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.5rem;
+    }
+
+    body:has(.stat-card) .news-grid .stat-card {
+        flex: 0 0 300px;
+    }
+}
+
+/* =========================================================
+   TABLE TEAM ICON / LOGO
+   ========================================================= */
+
+.table-team-icon,
+.admin-club-icon-img {
     width: 32px !important;
     height: 32px !important;
-    object-fit: contain !important; /* ပုံအပြည့်ပေါ်စေရန် contain သုံးထားသည် */
+    object-fit: contain !important;
     border-radius: 50% !important;
     vertical-align: middle;
     margin-right: 8px;
     background-color: #fff;
-    padding: 3px; /* အဝိုင်းဘောင်အတွင်း လိုဂိုမကပ်သွားစေရန် */
+    padding: 3px;
     border: 1px solid #ddd;
 }
